@@ -1,0 +1,33 @@
+server:
+  port: 8089
+  servlet:
+    session:
+      timeout: 300d
+mybatis:
+  mapper-locations: classpath:com/momotalk_v1/mapper/*xml
+  type-aliases-package: com.momotalk_v1.entity
+  configuration:
+    map-underscore-to-camel-case: true
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost/momotalk
+    username: root
+    password: password
+    type: com.alibaba.druid.pool.DruidDataSource
+  redis:
+    port: 6379
+    host: localhost
+    database: 0
+  session:
+    store-type: redis
+  servlet:
+    multipart:
+      max-request-size: 1GB
+      max-file-size: 100MB
+  web:
+    resources:
+      static-locations: =classpath:/static/
+wfg:
+  worker-id-bit-length: 6
+  seq-bit-length: 6
