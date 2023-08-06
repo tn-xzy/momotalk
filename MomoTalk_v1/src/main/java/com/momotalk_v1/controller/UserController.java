@@ -1,6 +1,7 @@
 package com.momotalk_v1.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
+import cn.dev33.satoken.util.SaResult;
 import com.momotalk_v1.entity.Result;
 import com.momotalk_v1.entity.User;
 import com.momotalk_v1.entity.constant.ResultCodes;
@@ -18,14 +19,15 @@ public class UserController {
     @Autowired
     UserMapper userMapper;
     @GetMapping
-    public Result<String> login(String username,String password,HttpSession session){
+    public Result<String> login(String username,String password){
         System.out.println(username+":"+password);
         User auth=userMapper.login(username);
         if (Objects.equals(auth.getPassword(),password)){
-            session.setAttribute("username",username);
-            return new Result<>(ResultCodes.SUCCESS,"success");
+            StpUtil.login(username);
+            StpUtil.getSession().set("username",username);
+            return Result.ok("登录成功");
         }else {
-            return new Result<>(ResultCodes.FAIL,"fail");
+            return Result.fail("登陆失败");
         }
     }
     @PostMapping
@@ -33,5 +35,10 @@ public class UserController {
         user.setRegisterTime(new Date());
         userMapper.register(user);
         return new Result<>(ResultCodes.SUCCESS,"SUCCESS");
+    }
+    @DeleteMapping
+    public Result<String> logout(@SessionAttribute String username){
+        StpUtil.logout(username);
+        return Result.ok("注销成功");
     }
 }

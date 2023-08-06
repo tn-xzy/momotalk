@@ -1,5 +1,6 @@
 package com.momotalk_v1.entity;
 
+import com.momotalk_v1.entity.constant.ResultCodes;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,15 @@ public class Result<T> {
         this.code = code;
         this.errcode = errcode;
         this.errinfo = errinfo;
+    }
+    public static Result<String> ok(String info){
+        return new Result<>(ResultCodes.SUCCESS,info);
+    }
+    public static Result<String> fail(String info){
+        return new Result<>(ResultCodes.FAIL,info);
+    }
+    public static Result<String> error(int errcode,String info){
+        return new Result<>(ResultCodes.ERROR,errcode,info);
     }
 }
 

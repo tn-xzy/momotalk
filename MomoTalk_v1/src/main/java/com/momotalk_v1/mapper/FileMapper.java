@@ -11,9 +11,10 @@ public interface FileMapper {
     public int exists(String hash);
 
     @Insert("insert into file " +
-            "(hash, filename)VALUES  " +
-            "(#{hash}, #{filename})")
+//            "values (hash,filename,size,unit) "+
+            "values (#{hash}, #{savename}, #{size}, #{unit})")
     public boolean add(UploadFile uploadFile);
-    @Select("select hash, filename from file where hash=#{hash}")
+
+    @Select("select hash, savename, size, unit from file where hash=#{hash}")
     public UploadFile check(String hash);
 }

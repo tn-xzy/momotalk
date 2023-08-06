@@ -1,5 +1,6 @@
 package com.momotalk_v1.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import com.momotalk_v1.entity.GroupMember;
 import com.momotalk_v1.entity.Result;
 import com.momotalk_v1.entity.constant.ResultCodes;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("member")
+@SaCheckLogin
 public class MemberController {
     @Autowired
     MemberService memberService;

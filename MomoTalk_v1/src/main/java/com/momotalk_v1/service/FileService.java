@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -20,26 +21,35 @@ public class FileService {
     File path=new File(resourcePath);
     @Autowired
     FileMapper fileMapper;
-    @Value("${server.port}")
-    String port;
-    public String upload(MultipartFile file) {
+    String[] units=new String[]{"bytes","kb","mb","gb","tb"};
+//    @Value("${server.port}")
+//    String port;
+    public UploadFile upload(MultipartFile file,String medPath) {
         try {
             String sha1= HashUtil.sha1(file.getInputStream());
             UploadFile uploadFile=fileMapper.check(sha1);
             if (uploadFile!=null){
-                return uploadFile.getFilename();
+                return uploadFile;
             }else {
                 String[] fileNames=file.getOriginalFilename().split("\\.");
                 String fileName=sha1+"."+fileNames[fileNames.length-1];
-                File originFile=Paths.get(resourcePath,"img",fileName).toFile();
+                File targetPath=Paths.get(resourcePath,medPath).toFile();
+                if (!targetPath.exists())
+                    targetPath.mkdirs();
+                File originFile=Paths.get(targetPath.getAbsolutePath(),fileName).toFile();
                 file.transferTo(originFile);
-                String filePath=Paths.get("static","img",fileName).toString();
-                uploadFile=new UploadFile(sha1,filePath);
+                Path targetFile=Paths.get(originFile.getAbsolutePath());
+                double size= Files.size(targetFile);
+                int unitIndex=0;
+                while (size>=1024&&unitIndex<units.length){
+                    size/=1024;
+                    unitIndex++;
+                }
+                uploadFile=new UploadFile(sha1,fileName,String.format("%.2f",size),units[unitIndex]);
                 fileMapper.add(uploadFile);
-                return filePath;
+                return uploadFile;
             }
-        }catch (IOException e){
-
+        }catch (IOException ignored){
         }
         return null;
     }
